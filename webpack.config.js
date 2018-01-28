@@ -30,10 +30,15 @@ module.exports = {
                     ]
                 })
             },
+            // {
+            //     test: /\.(sass|scss)$/,
+            //     // exclude: "/node_modules/bootstrap/",
+            //     loader: ExtractTextPlugin.extract(["css-loader", "sass-loader"])
+            // },
             {
                 test: /\.(sass|scss)$/,
                 // exclude: "/node_modules/bootstrap/",
-                loader: ExtractTextPlugin.extract(["css-loader", "sass-loader"])
+                loaders: ["css-loader", "sass-loader"]
             }
         ]
     },
