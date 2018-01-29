@@ -6,7 +6,9 @@ dirToJson("./node_modules/bootstrap/scss", (err, dirTree) => {
         throw err;
     }
     else {
-        console.log(dirTree);
+        const path = "./src/bootstrap.json";
+
+        console.log("Write file to " + path);
 
         fs.writeFileSync("./src/bootstrap.json", JSON.stringify(dirTree));
     }

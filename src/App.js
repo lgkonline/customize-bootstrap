@@ -1,7 +1,10 @@
 import React from "react";
 import { LgkPillComponent } from "lgk";
 
+import Loading from "./Loading";
+
 const bootstrapDir = require("./bootstrap.json");
+const bootstrapVersion = require("bootstrap/package.json").version;
 
 const Sass = require("./sass");
 Sass.setWorkerUrl("sass.worker.js");
@@ -62,14 +65,38 @@ class App extends React.Component {
         return (
             <div>
                 {this.state.resultStyle ?
-                    <div>
-                        <style type="text/css" dangerouslySetInnerHTML={{ __html: this.state.resultStyle }} />
+                    <div className="appear">
+                        <style
+                            type="text/css"
+                            dangerouslySetInnerHTML={{
+                                __html: `
+                                    .appear {
+                                        animation: appear .5s;
+                                    }
+                                    
+                                    @keyframes appear {
+                                        from {
+                                            opacity: 0;
+                                        }
+                                        to {
+                                            opacity: 1;
+                                        }
+                                    }
+                                    
+                                    ${this.state.resultStyle}
+                                `
+                            }}
+                        />
 
                         <LgkPillComponent black />
 
                         <div className="jumbotron jumbotron-fluid bg-primary text-white">
                             <div className="container">
                                 <h1 className="display-4">Customize Bootstrap</h1>
+
+                                <p className="lead">
+                                    Optimized for Bootstrap Version {bootstrapVersion}
+                                </p>
                             </div>
                         </div>
 
@@ -94,7 +121,7 @@ class App extends React.Component {
                         </div>
                     </div>
                     :
-                    <div>Please wait...</div>
+                    <Loading />
                 }
             </div>
         );
