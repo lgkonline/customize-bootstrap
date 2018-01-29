@@ -95,7 +95,7 @@ class App extends React.Component {
                                 <h1 className="display-4">Customize Bootstrap</h1>
 
                                 <p className="lead">
-                                    Optimized for Bootstrap Version {bootstrapVersion}
+                                    Optimized for Bootstrap version {bootstrapVersion}
                                 </p>
                             </div>
                         </div>
