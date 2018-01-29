@@ -7,7 +7,7 @@ module.exports = {
         "./main.js",
     ],
     output: {
-        path: path.join(__dirname, "www"),
+        path: path.join(__dirname, "docs"),
         filename: "bundle.js",
     },
     module: {
@@ -38,7 +38,8 @@ module.exports = {
             {
                 test: /\.(sass|scss)$/,
                 // exclude: "/node_modules/bootstrap/",
-                loaders: ["css-loader", "sass-loader"]
+                // loaders: ["css-loader", "sass-loader"]
+                loader: "raw-loader"
             }
         ]
     },

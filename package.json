@@ -4,8 +4,9 @@
   "description": "A tool to customize / theme Bootstrap 4",
   "main": "index.js",
   "scripts": {
-    "compile": "webpack -p",
-    "start": "webpack -d --watch",
+    "modelize-bootstrap": "node ./modelize-bootstrap",
+    "compile": "npm run modelize-bootstrap && webpack -p",
+    "start": "npm run modelize-bootstrap && webpack -d --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,9 +31,11 @@
     "babel-preset-react": "^6.24.1",
     "bootstrap": "^4.0.0",
     "css-loader": "^0.28.9",
+    "dir-to-json": "0.0.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "lgk": "^1.0.9",
     "node-sass": "^4.7.2",
+    "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "sass-loader": "^6.0.6",
