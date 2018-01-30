@@ -1,13 +1,15 @@
 {
   "name": "customize-bootstrap",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tool to customize / theme Bootstrap 4",
   "main": "index.js",
   "scripts": {
     "modelize-bootstrap": "node ./modelize-bootstrap",
-    "compile": "npm run modelize-bootstrap && webpack -p",
+    "put-version": "put-version ./docs/index.html",
+    "compile": "npm run modelize-bootstrap && npm run put-version && webpack -p",
     "start": "npm run modelize-bootstrap && webpack -d --watch",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "scss": "node-sass test.scss"
   },
   "repository": {
     "type": "git",
@@ -35,11 +37,16 @@
     "extract-text-webpack-plugin": "^3.0.2",
     "lgk": "^1.0.9",
     "node-sass": "^4.7.2",
+    "put-version": "^1.0.9",
     "raw-loader": "^0.5.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "sass-loader": "^6.0.6",
+    "sass-to-js": "^1.3.1",
+    "sass-vars-extractor": "^1.2.0-alpha",
+    "scss-to-json": "^2.0.0",
     "style-loader": "^0.20.1",
     "webpack": "^3.10.0"
-  }
+  },
+  "devDependencies": {}
 }

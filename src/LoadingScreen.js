@@ -1,6 +1,6 @@
 import React from "react";
 
-class Loading extends React.Component {
+class LoadingScreen extends React.Component {
     render() {
         return (
             <div style={{
@@ -17,22 +17,6 @@ class Loading extends React.Component {
                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
                         font-weight: 300;
                     }
-
-                    .animation-spin {
-                        display: inline-block;
-                        animation: spinAnimation 1s infinite linear;
-                    }
-                    
-                    @keyframes spinAnimation {
-                        0% {
-                            transform: rotate(0deg);
-                            color: $primary;
-                        }
-                        100% {
-                            transform: rotate(359deg);
-                            color: $secondary;
-                        }
-                    }
                     `
                 }} />
 
@@ -43,4 +27,4 @@ class Loading extends React.Component {
     }
 }
 
-export default Loading;
+export default LoadingScreen;
