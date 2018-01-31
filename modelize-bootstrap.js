@@ -2,8 +2,8 @@ const fs = require("fs");
 const path = require("path");
 const dirToJson = require("dir-to-json");
 
-const bootstrapDirOutputPath = path.resolve(__dirname, "src/bootstrap.dir.json");
-const bootstrapVariablesOutputPath = path.resolve(__dirname, "src/bootstrap.variables.json");
+const bootstrapDirOutputPath = path.resolve(__dirname, "src/data/bootstrap.dir.json");
+const bootstrapVariablesOutputPath = path.resolve(__dirname, "src/data/bootstrap.variables.json");
 
 /**
  * Save Bootstrap directory structure as JSON
