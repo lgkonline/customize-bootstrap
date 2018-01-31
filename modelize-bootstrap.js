@@ -27,17 +27,19 @@ dirToJson("./node_modules/bootstrap/scss", (err, dirTree) => {
 const scss = fs.readFileSync("./node_modules/bootstrap/scss/_variables.scss").toString();
 const lines = scss.split("\n");
 
-const outputObjects = [];
+const outputObjects = {};
 
 let i = 0;
-let j = -1;
+let j = "";
 lines.forEach(line => {
     if (
         line.substring(0, 2) == "//" &&
         lines[i + 1].substring(0, 2) == "//" && !lines[i + 1][2]
     ) {
         // Is section begin
-        j++;
+        const sectionName = line.replace("//", "").trim();
+
+        j = sectionName;
 
         outputObjects[j] = {
             sectionName: line.replace("//", "").trim(),

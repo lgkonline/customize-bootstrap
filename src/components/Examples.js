@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes, { func } from "prop-types";
 import { TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
 
 import Grid from "../examples/Grid";
@@ -19,9 +20,9 @@ class Examples extends React.Component {
             }
         ];
 
-        this.state = {
-            activeTab: 0
-        };
+        // this.state = {
+        //     activeTab: 0
+        // };
     }
 
     render() {
@@ -34,8 +35,8 @@ class Examples extends React.Component {
                         <NavItem key={i}>
                             <NavLink
                                 href="javascript:void(0)"
-                                className={this.state.activeTab == i ? "active" : ""}
-                                onClick={() => this.setState({ activeTab: i })}
+                                className={this.props.activeTab == i ? "active" : ""}
+                                onClick={() => this.props.onClick(i)}
                             >
                                 {example.label}
                             </NavLink>
@@ -43,7 +44,7 @@ class Examples extends React.Component {
                     )}
                 </Nav>
 
-                <TabContent activeTab={this.state.activeTab} className="m-3">
+                <TabContent activeTab={this.props.activeTab} className="m-3">
                     {this.examples.map((example, i) =>
                         <TabPane key={i} tabId={i}>
                             {example.component}
@@ -54,5 +55,10 @@ class Examples extends React.Component {
         );
     }
 }
+
+Examples.propTypes = {
+    activeTab: PropTypes.any,
+    onClick: PropTypes.func
+};
 
 export default Examples;

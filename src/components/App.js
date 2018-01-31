@@ -47,15 +47,16 @@ class App extends React.Component {
             resultStyle: null,
             compileBusy: false,
             firstCompileBusy: true,
-            btVariables: null
+            btVariables: null,
+            activeTab: 0
         };
     }
 
     setBtVariablesFromDefault(callback = () => { }) {
         const btVariables = JSON.parse(JSON.stringify(bootstrapVariables));
 
-        btVariables.map(section => {
-            section.variables = {};
+        Object.keys(btVariables).map(i => {
+            btVariables[i].variables = {};
         });
 
         this.setState({ btVariables: btVariables }, callback);
@@ -95,7 +96,9 @@ class App extends React.Component {
     jsVariablesToSass(callback = () => { }) {
         this.state.customStyle = "";
 
-        this.state.btVariables.map(section => {
+        Object.keys(this.state.btVariables).map(i => {
+            const section = this.state.btVariables[i];
+
             if (Object.keys(section.variables).length > 0) {
                 this.state.customStyle += `// ${section.sectionName}\n//\n\n`;
 
@@ -111,8 +114,20 @@ class App extends React.Component {
     }
 
     setHash() {
+        let btVariables = {};
+
+        // Only put variables to hash that changed, so the URL doesn't get to long
+        Object.keys(this.state.btVariables).map(i => {
+            const section = this.state.btVariables[i];
+
+            if (Object.keys(section.variables).length > 0) {
+                btVariables[i] = section;
+            }
+        });
+
         const hashObject = {
-            btVariables: this.state.btVariables
+            btVariables: btVariables,
+            activeTab: this.state.activeTab
         };
 
         location.hash = encodeURIComponent(JSON.stringify(hashObject));
@@ -122,6 +137,9 @@ class App extends React.Component {
     setStateFromHash(callback = () => { }) {
         if (location.hash && location.hash.indexOf("btVariables") > -1) {
             const hashObject = JSON.parse(decodeURIComponent(location.hash.replace("#", "")));
+
+            // Combine values from hash with current state
+            hashObject.btVariables = Object.assign(this.state.btVariables, hashObject.btVariables);
 
             this.setState(hashObject, callback);
         }
@@ -168,13 +186,13 @@ class App extends React.Component {
                     <main className="container-fluid">
                         <div className="row">
                             <div className="col-md-4">
-                                {this.state.btVariables.map((section, i) =>
+                                {Object.keys(this.state.btVariables).map((i, j) =>
                                     Object.keys(bootstrapVariables[i].variables).length > 0 &&
                                     <VariableSection
                                         key={i}
-                                        collapseDefaultValue={i == 1 ? true : false}
+                                        collapseDefaultValue={j == 1 ? true : false}
                                         sectionByDefault={bootstrapVariables[i]}
-                                        sectionByState={section}
+                                        sectionByState={this.state.btVariables[i]}
                                         onChange={({ target }, key) => {
                                             if (target.value == "") {
                                                 delete this.state.btVariables[i].variables[key];
@@ -212,7 +230,10 @@ class App extends React.Component {
                                     Reset
                                 </button>
 
-                                <Examples />
+                                <Examples
+                                    activeTab={this.state.activeTab}
+                                    onClick={(i) => this.setState({ activeTab: i }, this.setHash)}
+                                />
                             </div>
                         </div>
                     </main>
