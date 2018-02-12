@@ -40,6 +40,10 @@ module.exports = {
                 // exclude: "/node_modules/bootstrap/",
                 // loaders: ["css-loader", "sass-loader"]
                 loader: "raw-loader"
+            },
+            {
+                test: /\.(eot|svg|ttf|woff|woff2|jpg|png)$/,
+                loader: "file-loader?name=[name].[ext]"
             }
         ]
     },

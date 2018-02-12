@@ -1,6 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Collapse } from "reactstrap";
+import { SketchPicker } from "react-color";
+
+import Variable from "./Variable";
+
+const bootstrapTypes = require("../data/bootstrap.types.json");
 
 let typingTimer;
 
@@ -15,7 +20,8 @@ class VariableSection extends React.Component {
         super();
 
         this.state = {
-            collapse: false
+            collapse: false,
+            childrenCount: 0
         };
     }
 
@@ -23,9 +29,29 @@ class VariableSection extends React.Component {
         this.setState({ collapse: this.props.collapseDefaultValue });
     }
 
+    childrenCountUp() {
+        this.setState({
+            childrenCount: this.state.childrenCount + 1
+        });
+    }
+
     render() {
+        const children = [];
+
+        {
+            Object.keys(this.props.sectionByDefault.variables).map(key =>
+                this.props.sectionByDefault.variables[key].substring(0, 2) != "()" &&
+                (this.props.search == "" || key.indexOf(this.props.search) > -1) &&
+                children.push(<Variable
+                    key={key}
+                    {...this.props}
+                    varKey={key}
+                />)
+            )
+        }
+
         return (
-            <div className="card mb-3">
+            children.length > 0 && <div className="card mb-3">
                 <div className="card-body">
                     <a
                         href="javascript:void(0)"
@@ -36,38 +62,8 @@ class VariableSection extends React.Component {
                         </h5>
                     </a>
 
-                    <Collapse isOpen={this.state.collapse} className="mt-3">
-                        {Object.keys(this.props.sectionByDefault.variables).map(key =>
-                            this.props.sectionByDefault.variables[key].substring(0, 2) != "()" &&
-                            <div key={key} className="form-group row">
-                                <label
-                                    htmlFor={"var-" + key}
-                                    className="col-sm-4 col-form-label"
-                                >
-                                    {key}
-                                </label>
-
-                                <div className="col-sm-8">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id={"var-" + key}
-                                        placeholder={this.props.sectionByDefault.variables[key]}
-                                        value={this.props.sectionByState.variables[key] || ""}
-                                        onChange={event => {
-                                            this.props.onChange(event, key);
-                                        }}
-                                        onKeyUp={() => {
-                                            clearTimeout(typingTimer);
-                                            typingTimer = setTimeout(() => {
-                                                this.props.onPauseTyping();
-                                            }, 700);
-                                        }}
-                                        onKeyDown={() => clearTimeout(typingTimer)}
-                                    />
-                                </div>
-                            </div>
-                        )}
+                    <Collapse isOpen={this.state.collapse || this.props.search != ""} className="mt-3">
+                        {children}
                     </Collapse>
                 </div>
             </div>
@@ -80,7 +76,8 @@ VariableSection.propTypes = {
     sectionByDefault: PropTypes.object,
     sectionByState: PropTypes.object,
     onChange: PropTypes.func,
-    onPauseTyping: PropTypes.func
+    onPauseTyping: PropTypes.func,
+    search: PropTypes.string
 };
 
 export default VariableSection;

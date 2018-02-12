@@ -32,6 +32,8 @@ const outputObjects = {};
 let i = 0;
 let j = "";
 lines.forEach(line => {
+    // lines[i + 1].substring(0, 2) == "//" && !lines[i + 1][2]
+
     if (
         line.substring(0, 2) == "//" &&
         lines[i + 1].substring(0, 2) == "//" && !lines[i + 1][2]

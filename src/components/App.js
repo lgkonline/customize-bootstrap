@@ -1,5 +1,6 @@
 import React from "react";
 import { LgkPillComponent } from "lgk";
+import ClipboardButton from "react-clipboard.js";
 
 import VariableSection from "./VariableSection";
 import Examples from "./Examples";
@@ -48,8 +49,11 @@ class App extends React.Component {
             compileBusy: false,
             firstCompileBusy: true,
             btVariables: null,
-            activeTab: 0
+            activeTab: 0,
+            search: ""
         };
+
+        console.log(bootstrapVariables);
     }
 
     setBtVariablesFromDefault(callback = () => { }) {
@@ -186,6 +190,24 @@ class App extends React.Component {
                     <main className="container-fluid">
                         <div className="row">
                             <div className="col-md-4">
+                                <div className="input-group mb-3">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        value={this.state.search}
+                                        onChange={({ target }) => this.setState({ search: target.value })}
+                                        placeholder="Search..."
+                                    />
+
+                                    {this.state.search != "" &&
+                                        <div className="input-group-append">
+                                            <button className="btn btn-outline-secondary" onClick={() => this.setState({ search: "" })}>
+                                                <span className="icon-cross" />
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+
                                 {Object.keys(this.state.btVariables).map((i, j) =>
                                     Object.keys(bootstrapVariables[i].variables).length > 0 &&
                                     <VariableSection
@@ -204,6 +226,7 @@ class App extends React.Component {
                                             this.setState({ btVariables: this.state.btVariables }, this.jsVariablesToSass);
                                         }}
                                         onPauseTyping={() => this.compile()}
+                                        search={this.state.search}
                                     />
                                 )}
                             </div>
@@ -222,13 +245,28 @@ class App extends React.Component {
                                 </div>
 
                                 <button
-                                    className="btn btn-secondary"
+                                    className="btn btn-secondary mr-3"
                                     onClick={() => {
                                         this.setBtVariablesFromDefault(this.compile);
                                     }}
                                 >
-                                    Reset
+                                    <span className="icon-undo2" /> Reset
                                 </button>
+
+                                <ClipboardButton
+                                    className={"btn btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
+                                    data-clipboard-text={location.href}
+                                    onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
+                                        setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
+                                    })}
+                                >
+                                    {this.state.copyConfigSuccess ?
+                                        <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
+                                        :
+                                        <span><span className="icon-share" /> Share this config</span>
+                                    }
+
+                                </ClipboardButton>
 
                                 <Examples
                                     activeTab={this.state.activeTab}
