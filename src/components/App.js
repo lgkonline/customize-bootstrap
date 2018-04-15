@@ -44,16 +44,15 @@ class App extends React.Component {
         super();
 
         this.state = {
-            customStyle: "",
+            outputStyle: "",
             resultStyle: null,
             compileBusy: false,
             firstCompileBusy: true,
             btVariables: null,
             activeTab: 0,
-            search: ""
+            search: "",
+            customStyle: ""
         };
-
-        console.log(bootstrapVariables);
     }
 
     setBtVariablesFromDefault(callback = () => { }) {
@@ -85,7 +84,7 @@ class App extends React.Component {
     }
 
     compile(callback = this.setHash) {
-        const style = this.state.customStyle + bootstrapStyle;
+        const style = this.state.outputStyle + bootstrapStyle;
         this.setState({ compileBusy: true });
 
         sass.compile(style, result => {
@@ -98,23 +97,29 @@ class App extends React.Component {
     }
 
     jsVariablesToSass(callback = () => { }) {
-        this.state.customStyle = "";
+        this.state.outputStyle = "";
 
         Object.keys(this.state.btVariables).map(i => {
             const section = this.state.btVariables[i];
 
             if (Object.keys(section.variables).length > 0) {
-                this.state.customStyle += `// ${section.sectionName}\n//\n\n`;
+                this.state.outputStyle += `// ${section.sectionName}\n//\n\n`;
 
                 Object.keys(section.variables).map(key => {
-                    this.state.customStyle += key + ": " + section.variables[key] + ";\n";
+                    this.state.outputStyle += key + ": " + section.variables[key] + ";\n";
                 });
 
-                this.state.customStyle += "\n\n";
+                this.state.outputStyle += "\n\n";
             }
         });
 
-        this.setState({ customStyle: this.state.customStyle }, callback);
+        this.state.outputStyle = this.state.customStyle + "\n\n" + this.state.outputStyle;
+
+        if (this.state.outputStyle != "") {
+            this.state.outputStyle = `// Open the following link to edit this config on Customize Bootstrap\n// ${location.href}\n\n` + this.state.outputStyle;
+        }
+
+        this.setState({ outputStyle: this.state.outputStyle }, callback);
     }
 
     setHash() {
@@ -131,7 +136,8 @@ class App extends React.Component {
 
         const hashObject = {
             btVariables: btVariables,
-            activeTab: this.state.activeTab
+            activeTab: this.state.activeTab,
+            customStyle: this.state.customStyle
         };
 
         location.hash = encodeURIComponent(JSON.stringify(hashObject));
@@ -236,10 +242,20 @@ class App extends React.Component {
                                     <textarea
                                         className="form-control"
                                         value={this.state.customStyle}
+                                        onChange={({ target }) => this.setState({ customStyle: target.value }, this.setHash)}
+                                        placeholder="Here you can insert custom CSS, for example to import a webfont."
+                                        spellCheck={false}
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <textarea
+                                        className="form-control"
+                                        value={this.state.outputStyle}
                                         readOnly
                                         disabled
                                         placeholder="No compiled stylesheet yet. Change some variables and see what will happen."
-                                        style={{ minHeight: "200px" }}
+                                        style={{ minHeight: "200px", wordWrap: "inherit" }}
                                         spellCheck={false}
                                     />
                                 </div>
@@ -254,7 +270,7 @@ class App extends React.Component {
                                 </button>
 
                                 <ClipboardButton
-                                    className={"btn btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
+                                    className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
                                     data-clipboard-text={location.href}
                                     onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
                                         setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
@@ -264,6 +280,21 @@ class App extends React.Component {
                                         <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
                                         :
                                         <span><span className="icon-share" /> Share this config</span>
+                                    }
+
+                                </ClipboardButton>
+
+                                <ClipboardButton
+                                    className={"btn btn-" + (this.state.copyCodeSuccess ? "success" : "secondary")}
+                                    data-clipboard-text={this.state.outputStyle}
+                                    onSuccess={() => this.setState({ copyCodeSuccess: true }, () => {
+                                        setTimeout(() => this.setState({ copyCodeSuccess: false }), 3000);
+                                    })}
+                                >
+                                    {this.state.copyCodeSuccess ?
+                                        <span><span className="icon-checkmark" /> Nice, you copied the code. Have fun with it.</span>
+                                        :
+                                        <span><span className="icon-copy" /> Copy the code</span>
                                     }
 
                                 </ClipboardButton>

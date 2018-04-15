@@ -32,6 +32,16 @@ class Variable extends React.Component {
                             className="form-control"
                             id={"var-" + this.props.varKey}
                             placeholder={this.props.sectionByDefault.variables[this.props.varKey]}
+                            onDoubleClick={() => {
+                                if (!this.props.sectionByState.variables[this.props.varKey]) {
+                                    this.props.onChange({
+                                        target: {
+                                            value: this.props.sectionByDefault.variables[this.props.varKey].replace(" !default", "")
+                                        }
+                                    }, this.props.varKey);
+                                }
+                            }}
+                            title={(!this.props.sectionByState.variables[this.props.varKey]) ? "Hint: double click to take the default value" : ""}
                             value={this.props.sectionByState.variables[this.props.varKey] || ""}
                             onChange={event => {
                                 this.props.onChange(event, this.props.varKey);
