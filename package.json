@@ -50,6 +50,6 @@
     "sass-vars-extractor": "^1.2.0-alpha",
     "scss-to-json": "^2.0.0",
     "style-loader": "^0.20.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.11.0"
   }
 }
