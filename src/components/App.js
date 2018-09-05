@@ -313,7 +313,8 @@ class App extends React.Component {
                         Made with <span className="icon-heart" /> in Germany by LGK.
                         Checkout my <a href="https://lgk.io/">website</a> or follow me on <a href="https://twitter.com/lgkonline">Twitter</a>.<br />
                         The code is <a href="https://github.com/lgkonline/customize-bootstrap/blob/master/LICENSE">MIT licensed</a>.<br />
-                        <a href="https://lgk.io/site/#/contact">Contact</a> <a href="https://lgk.io/site/#/imprint">Imprint</a>
+                        <a href="https://lgk.io/site/#/contact">Contact</a> <a href="https://lgk.io/site/#/imprint">Imprint</a><br />
+                        <a className="btn btn-link" href="https://github.com/lgkonline/customize-bootstrap">Customize Bootstrap on GitHub</a>
                     </footer>
                 </div>
 
