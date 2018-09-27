@@ -1,13 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Collapse } from "reactstrap";
-import { SketchPicker } from "react-color";
 
 import Variable from "./Variable";
-
-const bootstrapTypes = require("../data/bootstrap.types.json");
-
-let typingTimer;
 
 class VariableSection extends React.Component {
     static get defaultProps() {

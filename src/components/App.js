@@ -51,7 +51,8 @@ class App extends React.Component {
             btVariables: null,
             activeTab: 0,
             search: "",
-            customStyle: ""
+            customStyle: "",
+            colorganizeVersion: null // If null, this app is not used through Colorganize
         };
     }
 
@@ -140,6 +141,16 @@ class App extends React.Component {
             customStyle: this.state.customStyle
         };
 
+        window.hashObject = hashObject;
+
+        // Event for Colorganize from parent
+        if (window.parent) {
+            const variablesChangeEvent = new CustomEvent("variablesChangeEvent", {
+                detail: hashObject
+            });
+            window.parent.document.dispatchEvent(variablesChangeEvent);
+        }
+
         location.hash = encodeURIComponent(JSON.stringify(hashObject));
         window.onhashchange = () => this.compileFromHash();
     }
@@ -150,6 +161,11 @@ class App extends React.Component {
 
             // Combine values from hash with current state
             hashObject.btVariables = Object.assign(this.state.btVariables, hashObject.btVariables);
+
+            if (hashObject.colorganizeVersion) {
+                // This app is used though Colorganize
+                this.setState({ colorganizeVersion: hashObject.colorganizeVersion });
+            }
 
             this.setState(hashObject, callback);
         }
@@ -181,11 +197,13 @@ class App extends React.Component {
                         }}
                     />
 
-                    <LgkPillComponent black />
+                    <div className={this.state.colorganizeVersion ? "d-none" : ""}>
+                        <LgkPillComponent black />
+                    </div>
 
-                    <div className="jumbotron jumbotron-fluid bg-primary text-white">
+                    <div className="jumbotron jumbotron-fluid bg-primary text-white py-3">
                         <div className="container text-center">
-                            <h1 className="display-3">Customize Bootstrap</h1>
+                            <h1 className="display-4">Customize Bootstrap</h1>
 
                             <p className="lead">
                                 Optimized for Bootstrap version {bootstrapVersion}
