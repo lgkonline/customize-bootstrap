@@ -171,7 +171,7 @@ class App extends React.Component {
                 if (hashObject.btVariables[p].variables) {
 
                     Object.keys(hashObject.btVariables[p].variables).forEach(v => {
-                        hashObject[v] = hashObject.btVariables[p].variables[v];
+                        hashObject.btHashVars[v] = hashObject.btVariables[p].variables[v];
                     });
                     hashObject.btVariables[p] = hashObject.btVariables[p].variables;
                 }
