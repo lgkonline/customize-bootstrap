@@ -47,8 +47,8 @@ class App extends React.Component {
             outputStyle: "",
             resultStyle: null,
             compileBusy: false,
-            firstCompileBusy: true,
             btVariables: null,
+            btHashVars: {},
             activeTab: 0,
             search: "",
             customStyle: "",
@@ -60,7 +60,7 @@ class App extends React.Component {
         const btVariables = JSON.parse(JSON.stringify(bootstrapVariables));
 
         Object.keys(btVariables).map(i => {
-            btVariables[i].variables = {};
+            btVariables[i] = {};
         });
 
         this.setState({ btVariables: btVariables }, callback);
@@ -71,11 +71,11 @@ class App extends React.Component {
     }
 
     componentDidMount() {
-        if (location.hash && location.hash.indexOf("btVariables") > -1) {
+        if (location.hash && (location.hash.indexOf("btVariables") > -1 || location.hash.indexOf("btHashVars") > -1)) {
             this.compileFromHash();
         }
         else {
-            this.compile();
+            // this.compile();
         }
     }
 
@@ -89,7 +89,7 @@ class App extends React.Component {
         this.setState({ compileBusy: true });
 
         sass.compile(style, result => {
-            this.setState({ compileBusy: false, firstCompileBusy: false });
+            this.setState({ compileBusy: false });
 
             if (result.text) {
                 this.setState({ resultStyle: result.text }, callback);
@@ -103,11 +103,11 @@ class App extends React.Component {
         Object.keys(this.state.btVariables).map(i => {
             const section = this.state.btVariables[i];
 
-            if (Object.keys(section.variables).length > 0) {
-                this.state.outputStyle += `// ${section.sectionName}\n//\n\n`;
+            if (Object.keys(section).length > 0) {
+                this.state.outputStyle += `// ${i}\n//\n\n`;
 
-                Object.keys(section.variables).map(key => {
-                    this.state.outputStyle += key + ": " + section.variables[key] + ";\n";
+                Object.keys(section).map(key => {
+                    this.state.outputStyle += key + ": " + section[key] + ";\n";
                 });
 
                 this.state.outputStyle += "\n\n";
@@ -130,13 +130,13 @@ class App extends React.Component {
         Object.keys(this.state.btVariables).map(i => {
             const section = this.state.btVariables[i];
 
-            if (Object.keys(section.variables).length > 0) {
+            if (Object.keys(section).length > 0) {
                 btVariables[i] = section;
             }
         });
 
         const hashObject = {
-            btVariables: btVariables,
+            btHashVars: this.state.btHashVars,
             activeTab: this.state.activeTab,
             customStyle: this.state.customStyle
         };
@@ -152,20 +152,48 @@ class App extends React.Component {
         }
 
         location.hash = encodeURIComponent(JSON.stringify(hashObject));
-        window.onhashchange = () => this.compileFromHash();
     }
 
     setStateFromHash(callback = () => { }) {
         if (location.hash && location.hash.indexOf("btVariables") > -1) {
-            const hashObject = JSON.parse(decodeURIComponent(location.hash.replace("#", "")));
+            // // Migration from 1.1.*
+            let hashObject = JSON.parse(decodeURIComponent(location.hash.replace("#", "")));
 
-            // Combine values from hash with current state
-            hashObject.btVariables = Object.assign(this.state.btVariables, hashObject.btVariables);
+            hashObject.btHashVars = {};
+
+            Object.keys(hashObject.btVariables).forEach(p => {
+                if (hashObject.btVariables[p].variables) {
+
+                    Object.keys(hashObject.btVariables[p].variables).forEach(v => {
+                        hashObject[v] = hashObject.btVariables[p].variables[v];
+                    });
+                    hashObject.btVariables[p] = hashObject.btVariables[p].variables;
+                }
+            });
+
+            this.setState(hashObject, callback);
+        }
+
+        if (location.hash && location.hash.indexOf("btHashVars") > -1) {
+            let hashObject = JSON.parse(decodeURIComponent(location.hash.replace("#", "")));
+
+            Object.keys(bootstrapVariables).forEach(sectionName => {
+                Object.keys(hashObject.btHashVars).forEach(varName => {
+                    if (bootstrapVariables[sectionName][varName]) {
+                        // This is the right section
+                        this.state.btVariables[sectionName][varName] = hashObject.btHashVars[varName];
+                    }
+                });
+            });
 
             if (hashObject.colorganizeVersion) {
                 // This app is used though Colorganize
                 this.setState({ colorganizeVersion: hashObject.colorganizeVersion });
             }
+
+            hashObject.btVariables = this.state.btVariables;
+
+            console.log(hashObject);
 
             this.setState(hashObject, callback);
         }
@@ -233,23 +261,33 @@ class App extends React.Component {
                                 </div>
 
                                 {Object.keys(this.state.btVariables).map((i, j) =>
-                                    Object.keys(bootstrapVariables[i].variables).length > 0 &&
+                                    Object.keys(bootstrapVariables[i]).length > 0 &&
                                     <VariableSection
                                         key={i}
                                         collapseDefaultValue={j == 1 ? true : false}
+                                        sectionName={i}
                                         sectionByDefault={bootstrapVariables[i]}
                                         sectionByState={this.state.btVariables[i]}
                                         onChange={({ target }, key) => {
                                             if (target.value == "") {
-                                                delete this.state.btVariables[i].variables[key];
+                                                delete this.state.btVariables[i][key];
+                                                delete this.state.btHashVars[key];
                                             }
                                             else {
-                                                this.state.btVariables[i].variables[key] = target.value;
+                                                this.state.btVariables[i][key] = target.value;
+                                                this.state.btHashVars[key] = target.value;
                                             }
 
-                                            this.setState({ btVariables: this.state.btVariables }, this.jsVariablesToSass);
+                                            this.setState({
+                                                btVariables: this.state.btVariables,
+                                                btHashVars: this.state.btHashVars
+                                            });
                                         }}
-                                        onPauseTyping={() => this.compile()}
+                                        onPauseTyping={() => {
+                                            this.setHash();
+                                            this.jsVariablesToSass();
+                                            this.compile();
+                                        }}
                                         search={this.state.search}
                                     />
                                 )}
@@ -278,14 +316,12 @@ class App extends React.Component {
                                     />
                                 </div>
 
-                                <button
+                                <a
                                     className="btn btn-secondary mr-3"
-                                    onClick={() => {
-                                        this.setBtVariablesFromDefault(this.compile);
-                                    }}
+                                    href="."
                                 >
                                     <span className="icon-undo2" /> Reset
-                                </button>
+                                </a>
 
                                 <ClipboardButton
                                     className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
@@ -351,7 +387,7 @@ class App extends React.Component {
                     </div>
                 }
 
-                {this.state.firstCompileBusy &&
+                {this.state.compileFromHashBusy &&
                     <div
                         className="alert alert-success appear lead"
                         style={{

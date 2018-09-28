@@ -44,8 +44,6 @@ lines.forEach(line => {
         j = sectionName;
 
         outputObjects[j] = {
-            sectionName: line.replace("//", "").trim(),
-            variables: {}
         };
     }
 
@@ -56,7 +54,7 @@ lines.forEach(line => {
         const match = line.match(/\$(.*?):(.*?);/);
 
         if (match && match[1] && match[2]) {
-            currentSection.variables["$" + match[1]] = match[2].trim();
+            currentSection["$" + match[1]] = match[2].trim();
         }
     }
 

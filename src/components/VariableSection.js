@@ -34,8 +34,8 @@ class VariableSection extends React.Component {
         const children = [];
 
         {
-            Object.keys(this.props.sectionByDefault.variables).map(key =>
-                this.props.sectionByDefault.variables[key].substring(0, 2) != "()" &&
+            Object.keys(this.props.sectionByDefault).map(key =>
+                this.props.sectionByDefault[key].substring(0, 2) != "()" &&
                 (this.props.search == "" || key.indexOf(this.props.search) > -1) &&
                 children.push(<Variable
                     key={key}
@@ -53,7 +53,7 @@ class VariableSection extends React.Component {
                         onClick={() => this.setState({ collapse: !this.state.collapse })}
                     >
                         <h5>
-                            {this.props.sectionByDefault.sectionName}
+                            {this.props.sectionName}
                         </h5>
                     </a>
 
@@ -68,6 +68,7 @@ class VariableSection extends React.Component {
 
 VariableSection.propTypes = {
     collapseDefaultValue: PropTypes.bool,
+    sectionName: PropTypes.string,
     sectionByDefault: PropTypes.object,
     sectionByState: PropTypes.object,
     onChange: PropTypes.func,
