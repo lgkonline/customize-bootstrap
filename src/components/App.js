@@ -136,10 +136,16 @@ class App extends React.Component {
         });
 
         const hashObject = {
-            btHashVars: this.state.btHashVars,
-            activeTab: this.state.activeTab,
-            customStyle: this.state.customStyle
+            btHashVars: this.state.btHashVars
         };
+
+        if (this.state.activeTab != 0) {
+            hashObject.activeTab = this.state.activeTab;
+        }
+
+        if (this.state.customStyle != "") {
+            hashObject.customStyle = this.state.customStyle;
+        }
 
         window.hashObject = hashObject;
 
