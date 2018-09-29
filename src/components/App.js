@@ -77,6 +77,24 @@ class App extends React.Component {
         else {
             // this.compile();
         }
+
+        setTimeout(() => {
+            const body = document.body,
+                html = document.documentElement;
+
+            const documentHeight = Math.max(body.scrollHeight, body.offsetHeight,
+                html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+            // Event for Colorganize from parent
+            if (window.parent) {
+                const documentDidMountEvent = new CustomEvent("documentDidMountEvent", {
+                    detail: {
+                        documentHeight: documentHeight
+                    }
+                });
+                window.parent.document.dispatchEvent(documentDidMountEvent);
+            }
+        }, 500);
     }
 
     compileFromHash() {
@@ -147,8 +165,6 @@ class App extends React.Component {
             hashObject.customStyle = this.state.customStyle;
         }
 
-        window.hashObject = hashObject;
-
         // Event for Colorganize from parent
         if (window.parent) {
             const variablesChangeEvent = new CustomEvent("variablesChangeEvent", {
@@ -198,8 +214,6 @@ class App extends React.Component {
             }
 
             hashObject.btVariables = this.state.btVariables;
-
-            console.log(hashObject);
 
             this.setState(hashObject, callback);
         }
