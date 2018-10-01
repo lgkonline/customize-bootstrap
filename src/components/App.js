@@ -4,6 +4,7 @@ import ClipboardButton from "react-clipboard.js";
 
 import VariableSection from "./VariableSection";
 import Examples from "./Examples";
+import TextFieldWithTimer from "./TextFieldWithTimer";
 
 // As fallback. Should be overwritten by user's custom style
 import "bootstrap/dist/css/bootstrap.css";
@@ -77,24 +78,6 @@ class App extends React.Component {
         else {
             // this.compile();
         }
-
-        setTimeout(() => {
-            const body = document.body,
-                html = document.documentElement;
-
-            const documentHeight = Math.max(body.scrollHeight, body.offsetHeight,
-                html.clientHeight, html.scrollHeight, html.offsetHeight);
-
-            // Event for Colorganize from parent
-            if (window.parent) {
-                const documentDidMountEvent = new CustomEvent("documentDidMountEvent", {
-                    detail: {
-                        documentHeight: documentHeight
-                    }
-                });
-                window.parent.document.dispatchEvent(documentDidMountEvent);
-            }
-        }, 500);
     }
 
     compileFromHash() {
@@ -199,6 +182,10 @@ class App extends React.Component {
         if (location.hash && location.hash.indexOf("btHashVars") > -1) {
             let hashObject = JSON.parse(decodeURIComponent(location.hash.replace("#", "")));
 
+            if (Array.isArray(hashObject.btHashVars)) {
+                hashObject.btHashVars = {};
+            }
+
             Object.keys(bootstrapVariables).forEach(sectionName => {
                 Object.keys(hashObject.btHashVars).forEach(varName => {
                     if (bootstrapVariables[sectionName][varName]) {
@@ -219,14 +206,26 @@ class App extends React.Component {
         }
     }
 
+    afterValueChange() {
+        this.setHash();
+        this.jsVariablesToSass();
+        this.compile();
+    }
+
     render() {
         return (
             <div style={{ cursor: this.state.compileBusy ? "progress" : "" }}>
+                {this.state.colorganizeVersion &&
+                    <base target="_blank" />
+                }
+
                 <div className="appear">
                     <style
                         type="text/css"
                         dangerouslySetInnerHTML={{
                             __html: `
+                                    ${this.state.resultStyle || ""}
+
                                     .appear {
                                         animation: appear .5s;
                                     }
@@ -239,8 +238,6 @@ class App extends React.Component {
                                             opacity: 1;
                                         }
                                     }
-                                    
-                                    ${this.state.resultStyle}
                                 `
                         }}
                     />
@@ -288,25 +285,20 @@ class App extends React.Component {
                                         sectionName={i}
                                         sectionByDefault={bootstrapVariables[i]}
                                         sectionByState={this.state.btVariables[i]}
-                                        onChange={({ target }, key) => {
-                                            if (target.value == "") {
+                                        onChange={(value, key) => {
+                                            if (value == "") {
                                                 delete this.state.btVariables[i][key];
                                                 delete this.state.btHashVars[key];
                                             }
                                             else {
-                                                this.state.btVariables[i][key] = target.value;
-                                                this.state.btHashVars[key] = target.value;
+                                                this.state.btVariables[i][key] = value;
+                                                this.state.btHashVars[key] = value;
                                             }
 
                                             this.setState({
                                                 btVariables: this.state.btVariables,
                                                 btHashVars: this.state.btHashVars
-                                            });
-                                        }}
-                                        onPauseTyping={() => {
-                                            this.setHash();
-                                            this.jsVariablesToSass();
-                                            this.compile();
+                                            }, this.afterValueChange);
                                         }}
                                         search={this.state.search}
                                     />
@@ -315,10 +307,11 @@ class App extends React.Component {
 
                             <div className="col-md-8">
                                 <div className="form-group">
-                                    <textarea
+                                    <TextFieldWithTimer
+                                        type="textarea"
                                         className="form-control"
                                         value={this.state.customStyle}
-                                        onChange={({ target }) => this.setState({ customStyle: target.value }, this.setHash)}
+                                        onChange={(value) => this.setState({ customStyle: value }, this.afterValueChange)}
                                         placeholder="Here you can insert custom CSS, for example to import a webfont."
                                         spellCheck={false}
                                     />
@@ -412,9 +405,9 @@ class App extends React.Component {
                         className="alert alert-success appear lead"
                         style={{
                             position: "fixed",
-                            top: "50%",
+                            top: "20rem",
                             left: "50%",
-                            transform: "translate(-50%, -50%)",
+                            transform: "translateX(-50%)",
                             boxShadow: "0 1rem 3rem rgba(0,0,0,.3)"
                         }}
                     >

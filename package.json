@@ -1,13 +1,14 @@
 {
   "name": "customize-bootstrap",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A tool to customize / theme Bootstrap 4",
   "main": "index.js",
   "scripts": {
     "modelize-bootstrap": "node ./modelize-bootstrap",
     "put-version": "put-version ./docs/index.html",
     "compile": "npm run modelize-bootstrap && npm run put-version && webpack -p",
-    "start": "npm run modelize-bootstrap && webpack -d --watch",
+    "watch": "webpack -d --watch",
+    "start": "npm run modelize-bootstrap && npm run watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -53,6 +54,6 @@
     "webpack": "^4.6.0"
   },
   "devDependencies": {
-    "webpack-cli": "^2.1.2"
+    "webpack-cli": "^3.1.2"
   }
 }

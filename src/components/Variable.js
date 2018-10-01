@@ -1,10 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { SketchPicker } from "react-color";
+import TextFieldWithTimer from "./TextFieldWithTimer";
 
 const bootstrapTypes = require("../data/bootstrap.types.json");
 
-let typingTimer;
+// let typingTimer;
 
 class Variable extends React.Component {
     constructor() {
@@ -27,32 +28,21 @@ class Variable extends React.Component {
 
                 <div className="col-sm-8">
                     <div className="input-group">
-                        <input
+                        <TextFieldWithTimer
                             type="text"
                             className="form-control"
                             id={"var-" + this.props.varKey}
                             placeholder={this.props.sectionByDefault[this.props.varKey]}
                             onDoubleClick={() => {
                                 if (!this.props.sectionByState[this.props.varKey]) {
-                                    this.props.onChange({
-                                        target: {
-                                            value: this.props.sectionByDefault[this.props.varKey].replace(" !default", "")
-                                        }
-                                    }, this.props.varKey);
+                                    this.props.onChange(this.props.sectionByDefault[this.props.varKey].replace(" !default", ""), this.props.varKey);
                                 }
                             }}
                             title={(!this.props.sectionByState[this.props.varKey]) ? "Hint: double click to take the default value" : ""}
                             value={this.props.sectionByState[this.props.varKey] || ""}
-                            onChange={event => {
-                                this.props.onChange(event, this.props.varKey);
+                            onChange={value => {
+                                this.props.onChange(value, this.props.varKey);
                             }}
-                            onKeyUp={() => {
-                                clearTimeout(typingTimer);
-                                typingTimer = setTimeout(() => {
-                                    this.props.onPauseTyping();
-                                }, 700);
-                            }}
-                            onKeyDown={() => clearTimeout(typingTimer)}
                         />
 
                         {bootstrapTypes.color.indexOf(this.props.varKey) > -1 &&
@@ -73,13 +63,7 @@ class Variable extends React.Component {
                         <SketchPicker
                             color={this.props.sectionByState[this.props.varKey] || ""}
                             onChangeComplete={color => {
-                                const event = {
-                                    target: {
-                                        value: color.hex
-                                    }
-                                };
-                                this.props.onChange(event, this.props.varKey);
-                                this.props.onPauseTyping();
+                                this.props.onChange(color.hex, this.props.varKey);
                             }}
                         />
 
