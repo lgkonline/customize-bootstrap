@@ -53,7 +53,8 @@ class App extends React.Component {
             activeTab: 0,
             search: "",
             customStyle: "",
-            colorganizeVersion: null // If null, this app is not used through Colorganize
+            colorganizeVersion: null, // If null, this app is not used through Colorganize
+            error: null
         };
     }
 
@@ -92,8 +93,15 @@ class App extends React.Component {
         sass.compile(style, result => {
             this.setState({ compileBusy: false });
 
+            if (result.status === 1) {
+                this.setState({ error: result }, callback);
+            }
+
             if (result.text) {
-                this.setState({ resultStyle: result.text }, callback);
+                this.setState({
+                    resultStyle: result.text,
+                    error: null
+                }, callback);
             }
         });
     }
@@ -255,6 +263,25 @@ class App extends React.Component {
                             </p>
                         </div>
                     </div>
+
+                    {this.state.error &&
+                        <div className="container">
+                            <div className="alert alert-danger">
+                                <button className="close" onClick={() => this.setState({ error: null })}>&times;</button>
+
+                                <h4>Something went wrong while compiling 🤔</h4>
+                                <p>
+                                    This might happen when you use variables without defining them before.<br />
+                                    By the way: You can use the default value of a variable when you double-click on it's input field.
+                                </p>
+
+                                <p>
+                                    This is the error message:<br />
+                                    <code>{this.state.error.message}</code>
+                                </p>
+                            </div>
+                        </div>
+                    }
 
                     <main className="container-fluid">
                         <div className="row">
