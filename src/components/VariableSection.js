@@ -50,6 +50,7 @@ class VariableSection extends React.Component {
                 <div className="card-body">
                     <a
                         href="javascript:void(0)"
+                        target="_self"
                         onClick={() => this.setState({ collapse: !this.state.collapse })}
                     >
                         <h5>

@@ -359,6 +359,7 @@ class App extends React.Component {
                                 <a
                                     className="btn btn-secondary mr-3"
                                     href="."
+                                    target="_self"
                                 >
                                     <span className="icon-undo2" /> Reset
                                 </a>

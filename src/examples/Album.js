@@ -17,9 +17,9 @@ class Album extends React.Component {
                                 <div className="col-sm-4 offset-md-1 py-4">
                                     <h4 className="text-white">Contact</h4>
                                     <ul className="list-unstyled">
-                                        <li><a href="#" className="text-white">Follow on Twitter</a></li>
-                                        <li><a href="#" className="text-white">Like on Facebook</a></li>
-                                        <li><a href="#" className="text-white">Email me</a></li>
+                                        <li><a href="#" target="_self" className="text-white">Follow on Twitter</a></li>
+                                        <li><a href="#" target="_self" className="text-white">Like on Facebook</a></li>
+                                        <li><a href="#" target="_self" className="text-white">Email me</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -27,7 +27,7 @@ class Album extends React.Component {
                     </div>
                     <div className="navbar navbar-dark bg-dark box-shadow">
                         <div className="container d-flex justify-content-between">
-                            <a href="#" className="navbar-brand d-flex align-items-center">
+                            <a href="#" target="_self" className="navbar-brand d-flex align-items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" /><circle cx={12} cy={13} r={4} /></svg>
                                 <strong>Album</strong>
                             </a>
@@ -43,8 +43,8 @@ class Album extends React.Component {
                             <h1 className="jumbotron-heading">Album example</h1>
                             <p className="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don't simply skip over it entirely.</p>
                             <p>
-                                <a href="#" className="btn btn-primary my-2">Main call to action</a>
-                                <a href="#" className="btn btn-secondary my-2">Secondary action</a>
+                                <a href="#" target="_self" className="btn btn-primary my-2">Main call to action</a>
+                                <a href="#" target="_self" className="btn btn-secondary my-2">Secondary action</a>
                             </p>
                         </div>
                     </section>
@@ -193,10 +193,10 @@ class Album extends React.Component {
                 <footer className="text-muted">
                     <div className="container">
                         <p className="float-right">
-                            <a href="#">Back to top</a>
+                            <a href="#" target="_self">Back to top</a>
                         </p>
                         <p>Album example is © Bootstrap, but please download and customize it for yourself!</p>
-                        <p>New to Bootstrap? <a href="../../">Visit the homepage</a> or read our <a href="../../getting-started/">getting started guide</a>.</p>
+                        <p>New to Bootstrap? <a href="../../" target="_self">Visit the homepage</a> or read our <a href="../../getting-started/" target="_self">getting started guide</a>.</p>
                     </div>
                 </footer>
             </div>
