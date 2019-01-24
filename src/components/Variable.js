@@ -55,6 +55,28 @@ class Variable extends React.Component {
                                 </button>
                             </div>
                         }
+
+                        {bootstrapTypes.boolean.indexOf(this.props.varKey) > -1 &&
+                            <div className="input-group-append">
+                                <div className="input-group-text pr-1">
+
+                                    <div className="custom-control custom-checkbox">
+                                        <input
+                                            type="checkbox"
+                                            checked={this.props.sectionByState[this.props.varKey] ? this.props.sectionByState[this.props.varKey].indexOf("true") > -1 : this.props.sectionByDefault[this.props.varKey].indexOf("true") > -1}
+                                            onChange={() => {
+                                                const value = (this.props.sectionByState[this.props.varKey] ? this.props.sectionByState[this.props.varKey].indexOf("true") > -1 : this.props.sectionByDefault[this.props.varKey].indexOf("true") > -1) ? "false" : "true";
+                                                this.props.onChange(value, this.props.varKey);
+                                            }}
+                                            className="custom-control-input"
+                                            id={"checkbox-" + this.props.varKey}
+                                        />
+                                        <label className="custom-control-label" htmlFor={"checkbox-" + this.props.varKey} />
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
 

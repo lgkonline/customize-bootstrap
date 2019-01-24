@@ -22,6 +22,8 @@ const sass = new Sass();
 
 const bootstrapStyle = require("bootstrap/scss/bootstrap.scss").toString();
 
+const darkTheme = `#%7B"btHashVars"%3A%7B"%24gray-900"%3A"%23121212"%2C"%24white"%3A"%23fff"%2C"%24gray-800"%3A"%23232323"%2C"%24blue"%3A"lighten(%23096EB0%2C%2025%25)"%2C"%24primary"%3A"%24blue"%2C"%24gray-700"%3A"%23333333"%2C"%24pink"%3A"%23ff6caf"%2C"%24gray-400"%3A"%23ced4da"%2C"%24gray-500"%3A"%23adb5bd"%2C"%24black"%3A"%23000"%2C"%24gray-200"%3A"%23e9ecef"%2C"%24gray-300"%3A"%23dee2e6"%2C"%24gray-600"%3A"%236c757d"%2C"%24body-bg"%3A"%24gray-900"%2C"%24body-color"%3A"%24white"%2C"%24link-color"%3A"%24primary"%2C"%24link-hover-color"%3A"lighten(%24link-color%2C%2015%25)"%2C"%24table-bg"%3A"%24gray-800"%2C"%24table-border-color"%3A"%24gray-700"%2C"%24input-color"%3A"%24body-color"%2C"%24input-placeholder-color"%3A"%24gray-400"%2C"%24input-disabled-bg"%3A"%24gray-500"%2C"%24input-border-color"%3A"%24gray-600"%2C"%24input-group-addon-bg"%3A"%24gray-700"%2C"%24input-bg"%3A"rgba(%24white%2C%20.125)"%2C"%24card-bg"%3A"%24gray-800"%2C"%24nav-tabs-link-active-color"%3A"%24gray-300"%2C"%24nav-tabs-border-color"%3A"%24gray-700"%2C"%24nav-tabs-link-active-border-color"%3A"%24nav-tabs-border-color%20%24nav-tabs-border-color%20transparent"%2C"%24nav-tabs-link-active-bg"%3A"%24gray-700"%2C"%24nav-tabs-link-hover-border-color"%3A"%24gray-800%20%24gray-800%20transparent"%2C"%24modal-content-bg"%3A"%24gray-800"%2C"%24modal-header-border-color"%3A"%24gray-700"%2C"%24jumbotron-bg"%3A"%24gray-700"%2C"%24list-group-border-color"%3A"rgba(%24white%2C%20.125)"%2C"%24list-group-bg"%3A"%24gray-700"%2C"%24list-group-hover-bg"%3A"%24gray-600"%2C"%24list-group-action-color"%3A"%24gray-200"%2C"%24list-group-action-active-bg"%3A"%24gray-500"%2C"%24light"%3A"%24gray-700"%2C"%24navbar-light-color"%3A"rgba(%24white%2C%20.5)"%2C"%24navbar-light-hover-color"%3A"rgba(%24white%2C%20.7)"%2C"%24navbar-light-active-color"%3A"rgba(%24white%2C%20.9)"%2C"%24navbar-light-disabled-color"%3A"rgba(%24white%2C%20.3)"%2C"%24navbar-light-toggler-border-color"%3A"rgba(%24white%2C%20.1)"%2C"%24card-cap-bg"%3A"rgba(%24white%2C%20.03)"%2C"%24close-color"%3A"%24body-color"%2C"%24close-text-shadow"%3A"0%201px%200%20%24black"%2C"%24card-border-color"%3A"rgba(%24white%2C%20.125)"%2C"%24thumbnail-border-color"%3A"%24gray-700"%2C"%24pagination-bg"%3A"%24body-bg"%2C"%24pagination-border-color"%3A"%24gray-700"%2C"%24pagination-hover-bg"%3A"%24gray-800"%2C"%24pagination-hover-border-color"%3A"%24gray-700"%2C"%24pagination-disabled-border-color"%3A"%24gray-700"%2C"%24pagination-disabled-bg"%3A"%24body-bg"%2C"%24pagination-disabled-color"%3A"%24gray-400"%7D%7D`;
+
 function loopDir(dir) {
     dir.children.map(child => {
 
@@ -56,6 +58,8 @@ class App extends React.Component {
             colorganizeVersion: null, // If null, this app is not used through Colorganize
             error: null
         };
+
+        this.compileFromHash = this.compileFromHash.bind(this);
     }
 
     setBtVariablesFromDefault(callback = () => { }) {
@@ -254,8 +258,13 @@ class App extends React.Component {
                         <LgkPillComponent black />
                     </div>
 
-                    <div className="jumbotron jumbotron-fluid bg-primary text-white py-3">
-                        <div className="container text-center">
+                    <div className="jumbotron jumbotron-fluid bg-primary text-white py-1">
+                        <div className="container-fluid">
+                            <a href="." onClick={() => location.reload()} className="btn btn-light mr-1">Reset to default</a>
+                            <a href={"." + darkTheme} onClick={() => location.reload()} className="btn btn-dark">Dark theme</a>
+                        </div>
+
+                        <div className="container text-center py-3">
                             <h1 className="display-4">Customize Bootstrap</h1>
 
                             <p className="lead">
@@ -414,7 +423,8 @@ class App extends React.Component {
                 </div>
 
 
-                {this.state.compileBusy &&
+                {
+                    this.state.compileBusy &&
                     <div
                         className="progress"
                         style={{
@@ -428,7 +438,8 @@ class App extends React.Component {
                     </div>
                 }
 
-                {this.state.compileFromHashBusy &&
+                {
+                    this.state.compileFromHashBusy &&
                     <div
                         className="alert alert-success appear lead"
                         style={{
@@ -443,7 +454,7 @@ class App extends React.Component {
                         <span>&nbsp;Compiling the stylesheet. Please wait a sec.</span>
                     </div>
                 }
-            </div>
+            </div >
         );
     }
 }

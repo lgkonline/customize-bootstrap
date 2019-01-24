@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes, { func } from "prop-types";
 import { TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
 
+import CommonComponents from "../examples/CommonComponents";
+import Typography from "../examples/Typography";
 import Grid from "../examples/Grid";
 import Album from "../examples/Album";
 
@@ -10,6 +12,14 @@ class Examples extends React.Component {
         super();
 
         this.examples = [
+            {
+                component: <CommonComponents />,
+                label: "Common components"
+            },
+            {
+                component: <Typography />,
+                label: "Typography"
+            },
             {
                 component: <Grid />,
                 label: "Grid"
