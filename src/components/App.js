@@ -260,8 +260,8 @@ class App extends React.Component {
 
                     <div className="jumbotron jumbotron-fluid bg-primary text-white py-1">
                         <div className="container-fluid">
-                            <a href="." onClick={() => location.reload()} className="btn btn-light mr-1">Reset to default</a>
-                            <a href={"." + darkTheme} onClick={() => location.reload()} className="btn btn-dark">Dark theme</a>
+                            <a href="." onClick={(e) => { location.href = "."; location.reload(); }} className="btn btn-light mr-1">Reset to default</a>
+                            <a href={"." + darkTheme} onClick={(e) => { location.href = "." + darkTheme; location.reload(); }} className="btn btn-dark">Dark theme</a>
                         </div>
 
                         <div className="container text-center py-3">
