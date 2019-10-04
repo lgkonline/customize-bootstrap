@@ -162,8 +162,12 @@ class App extends React.Component {
 
         // Event for Colorganize from parent
         if (window.parent) {
+            let detail = JSON.parse(JSON.stringify(hashObject));
+            detail.rootStyle = window.getComputedStyle(document.documentElement);
+            detail.bodyStyle = window.getComputedStyle(document.body);
+
             const variablesChangeEvent = new CustomEvent("variablesChangeEvent", {
-                detail: hashObject
+                detail: detail
             });
             window.parent.document.dispatchEvent(variablesChangeEvent);
         }
@@ -258,20 +262,22 @@ class App extends React.Component {
                         <LgkPillComponent black />
                     </div>
 
-                    <div className="jumbotron jumbotron-fluid bg-primary text-white py-1">
-                        <div className="container-fluid">
-                            <a href="." onClick={(e) => { location.href = "."; location.reload(); }} className="btn btn-light mr-1">Reset to default</a>
-                            <a href={"." + darkTheme} onClick={(e) => { location.href = "." + darkTheme; location.reload(); }} className="btn btn-dark">Dark theme</a>
-                        </div>
+                    {!this.state.colorganizeVersion &&
+                        <div className="jumbotron jumbotron-fluid bg-primary text-white py-1">
+                            <div className="container-fluid">
+                                <a href="." onClick={(e) => { location.href = "."; location.reload(); }} className="btn btn-light mr-1">Reset to default</a>
+                                <a href={"." + darkTheme} onClick={(e) => { location.href = "." + darkTheme; location.reload(); }} className="btn btn-dark">Dark theme</a>
+                            </div>
 
-                        <div className="container text-center py-3">
-                            <h1 className="display-4">Customize Bootstrap</h1>
+                            <div className="container text-center py-3">
+                                <h1 className="display-4">Customize Bootstrap</h1>
 
-                            <p className="lead">
-                                Optimized for Bootstrap version {bootstrapVersion}
-                            </p>
+                                <p className="lead">
+                                    Optimized for Bootstrap version {bootstrapVersion}
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     {this.state.error &&
                         <div className="container">
@@ -292,7 +298,7 @@ class App extends React.Component {
                         </div>
                     }
 
-                    <main className="container-fluid">
+                    <main className={"container-fluid" + (this.state.colorganizeVersion ? " pt-3" : "")}>
                         <div className="row">
                             <div className="col-md-4">
                                 <div className="input-group mb-3">
@@ -365,28 +371,31 @@ class App extends React.Component {
                                     />
                                 </div>
 
-                                <a
-                                    className="btn btn-secondary mr-3"
-                                    href="."
-                                    target="_self"
-                                >
-                                    <span className="icon-undo2" /> Reset
-                                </a>
+                                {!this.state.colorganizeVersion && [
+                                    <a
+                                        key={0}
+                                        className="btn btn-secondary mr-3"
+                                        href="."
+                                        target="_self"
+                                    >
+                                        <span className="icon-undo2" /> Reset
+                                    </a>,
+                                    <ClipboardButton
+                                        key={1}
+                                        className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
+                                        data-clipboard-text={location.href}
+                                        onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
+                                            setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
+                                        })}
+                                    >
+                                        {this.state.copyConfigSuccess ?
+                                            <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
+                                            :
+                                            <span><span className="icon-share" /> Share this config</span>
+                                        }
 
-                                <ClipboardButton
-                                    className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
-                                    data-clipboard-text={location.href}
-                                    onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
-                                        setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
-                                    })}
-                                >
-                                    {this.state.copyConfigSuccess ?
-                                        <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
-                                        :
-                                        <span><span className="icon-share" /> Share this config</span>
-                                    }
-
-                                </ClipboardButton>
+                                    </ClipboardButton>
+                                ]}
 
                                 <ClipboardButton
                                     className={"btn btn-" + (this.state.copyCodeSuccess ? "success" : "secondary")}
@@ -409,17 +418,27 @@ class App extends React.Component {
                                 />
                             </div>
                         </div>
+
+                        {this.state.colorganizeVersion &&
+                            <div className="pb-2">
+                                <small>
+                                    Customize Bootstrap version {appVersion}. Optimized for Bootstrap version {bootstrapVersion}.
+                            </small>
+                            </div>
+                        }
                     </main>
 
-                    <footer className="container-fluid bg-light text-center py-3">
-                        <div style={{ color: "#ffa400", fontSize: "2rem" }}><span className="icon-lgk-filled" /></div>
-                        <span className="badge badge-dark">Version {appVersion}</span><br />
-                        Made with <span className="icon-heart" /> in Germany by LGK.
+                    {!this.state.colorganizeVersion &&
+                        <footer className="container-fluid bg-light text-center py-3">
+                            <div style={{ color: "#ffa400", fontSize: "2rem" }}><span className="icon-lgk-filled" /></div>
+                            <span className="badge badge-dark">Version {appVersion}</span><br />
+                            Made with <span className="icon-heart" /> in Germany by LGK.
                         Checkout my <a href="https://lgk.io/">website</a> or follow me on <a href="https://twitter.com/lgkonline">Twitter</a>.<br />
-                        The code is <a href="https://github.com/lgkonline/customize-bootstrap/blob/master/LICENSE">MIT licensed</a>.<br />
-                        <a href="https://lgk.io/site/#/contact">Contact</a> <a href="https://lgk.io/site/#/imprint">Imprint</a><br />
-                        <a className="btn btn-link" href="https://github.com/lgkonline/customize-bootstrap">Customize Bootstrap on GitHub</a>
-                    </footer>
+                            The code is <a href="https://github.com/lgkonline/customize-bootstrap/blob/master/LICENSE">MIT licensed</a>.<br />
+                            <a href="https://lgk.io/site/#/contact">Contact</a> <a href="https://lgk.io/site/#/imprint">Imprint</a><br />
+                            <a className="btn btn-link" href="https://github.com/lgkonline/customize-bootstrap">Customize Bootstrap on GitHub</a>
+                        </footer>
+                    }
                 </div>
 
 
@@ -454,7 +473,7 @@ class App extends React.Component {
                         <span>&nbsp;Compiling the stylesheet. Please wait a sec.</span>
                     </div>
                 }
-            </div >
+            </div>
         );
     }
 }
