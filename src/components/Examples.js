@@ -6,6 +6,7 @@ import CommonComponents from "../examples/CommonComponents";
 import Typography from "../examples/Typography";
 import Grid from "../examples/Grid";
 import Album from "../examples/Album";
+import { CustomHtml } from "../examples/CustomHtml";
 
 class Examples extends React.Component {
     constructor() {
@@ -27,6 +28,10 @@ class Examples extends React.Component {
             {
                 component: <Album />,
                 label: "Album"
+            },
+            {
+                component: <CustomHtml />,
+                label: "Custom HTML"
             }
         ];
 

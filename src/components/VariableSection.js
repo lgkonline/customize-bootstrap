@@ -36,18 +36,20 @@ class VariableSection extends React.Component {
         {
             Object.keys(this.props.sectionByDefault).map(key =>
                 this.props.sectionByDefault[key].substring(0, 2) != "()" &&
-                (this.props.search == "" || key.indexOf(this.props.search) > -1) &&
-                children.push(<Variable
-                    key={key}
-                    {...this.props}
-                    varKey={key}
-                />)
+                (this.props.search == "" || key.indexOf(this.props.search.toLowerCase()) > -1) &&
+                children.push(
+                    <Variable
+                        key={key}
+                        {...this.props}
+                        varKey={key}
+                    />
+                )
             )
         }
 
         return (
             children.length > 0 && <div className="card mb-3">
-                <div className="card-body">
+                <div className={"card-body" + (!this.state.collapse ? " pt-2 pb-1" : "")} style={{ transition: "padding .2s" }}>
                     <a
                         href="javascript:void(0)"
                         target="_self"

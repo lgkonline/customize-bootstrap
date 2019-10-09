@@ -1,7 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { SketchPicker } from "react-color";
+
 import TextFieldWithTimer from "./TextFieldWithTimer";
+import DollarBtn from "./DollarBtn";
 
 const bootstrapTypes = require("../data/bootstrap.types.json");
 
@@ -28,6 +30,11 @@ class Variable extends React.Component {
 
                 <div className="col-sm-8">
                     <div className="input-group">
+                        <DollarBtn
+                            varByState={this.props.sectionByState[this.props.varKey]}
+                            varByDefault={this.props.sectionByDefault[this.props.varKey]}
+                        />
+
                         <TextFieldWithTimer
                             type="text"
                             className="form-control"

@@ -1,6 +1,7 @@
 import React from "react";
 import { LgkPillComponent } from "lgk";
 import ClipboardButton from "react-clipboard.js";
+import { Collapse } from "reactstrap";
 
 import VariableSection from "./VariableSection";
 import Examples from "./Examples";
@@ -56,10 +57,13 @@ class App extends React.Component {
             search: "",
             customStyle: "",
             colorganizeVersion: null, // If null, this app is not used through Colorganize
-            error: null
+            error: null,
+            showSidebar: false
         };
 
         this.compileFromHash = this.compileFromHash.bind(this);
+
+        window.appRef = this;
     }
 
     setBtVariablesFromDefault(callback = () => { }) {
@@ -231,10 +235,6 @@ class App extends React.Component {
     render() {
         return (
             <div style={{ cursor: this.state.compileBusy ? "progress" : "" }}>
-                {this.state.colorganizeVersion &&
-                    <base target="_blank" />
-                }
-
                 <div className="appear">
                     <style
                         type="text/css"
@@ -253,6 +253,25 @@ class App extends React.Component {
                                         to {
                                             opacity: 1;
                                         }
+                                    }
+
+                                    @media screen and (min-width: 768px) {
+                                        .cb-sidebar {
+                                            position: -webkit-sticky;
+                                            position: sticky;
+                                            top: 1rem;
+                                            height: calc(100vh - 1rem);
+                                        }
+
+                                        .cb-links {
+                                            display: block !important;
+                                            max-height: calc(100vh - 5rem);
+                                            overflow-y: auto;
+                                        }
+                                    }
+
+                                    .cb-sidebar-toggle {
+                                        text-decoration: none !important;
                                     }
                                 `
                         }}
@@ -286,8 +305,8 @@ class App extends React.Component {
 
                                 <h4>Something went wrong while compiling 🤔</h4>
                                 <p>
-                                    This might happen when you use variables without defining them before.<br />
-                                    By the way: You can use the default value of a variable when you double-click on it's input field.
+                                    This might happen when you try to use a variable that is defined afterwards.<br />
+                                    As a workaround you could pre-define the variable you try to refer to.
                                 </p>
 
                                 <p>
@@ -300,51 +319,62 @@ class App extends React.Component {
 
                     <main className={"container-fluid" + (this.state.colorganizeVersion ? " pt-3" : "")}>
                         <div className="row">
-                            <div className="col-md-4">
-                                <div className="input-group mb-3">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        value={this.state.search}
-                                        onChange={({ target }) => this.setState({ search: target.value })}
-                                        placeholder="Search..."
-                                    />
+                            <div className="cb-sidebar col-md-4">
+                                <div className="d-flex align-items-center mb-3">
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={this.state.search}
+                                            onChange={({ target }) => this.setState({ search: target.value, showSidebar: true })}
+                                            placeholder="Search..."
+                                        />
 
-                                    {this.state.search != "" &&
-                                        <div className="input-group-append">
-                                            <button className="btn btn-outline-secondary" onClick={() => this.setState({ search: "" })}>
-                                                <span className="icon-cross" />
-                                            </button>
-                                        </div>
-                                    }
+                                        {this.state.search != "" &&
+                                            <div className="input-group-append">
+                                                <button className="btn btn-outline-secondary" onClick={() => this.setState({ search: "" })}>
+                                                    <span className="icon-cross" />
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <button
+                                        className="cb-sidebar-toggle btn btn-link d-md-none"
+                                        onClick={() => this.setState({ showSidebar: !this.state.showSidebar })}
+                                    >
+                                        <span className="icon-menu" />
+                                    </button>
                                 </div>
 
-                                {Object.keys(this.state.btVariables).map((i, j) =>
-                                    Object.keys(bootstrapVariables[i]).length > 0 &&
-                                    <VariableSection
-                                        key={i}
-                                        collapseDefaultValue={j == 1 ? true : false}
-                                        sectionName={i}
-                                        sectionByDefault={bootstrapVariables[i]}
-                                        sectionByState={this.state.btVariables[i]}
-                                        onChange={(value, key) => {
-                                            if (value == "") {
-                                                delete this.state.btVariables[i][key];
-                                                delete this.state.btHashVars[key];
-                                            }
-                                            else {
-                                                this.state.btVariables[i][key] = value;
-                                                this.state.btHashVars[key] = value;
-                                            }
+                                <Collapse isOpen={this.state.showSidebar} className="cb-links">
+                                    {Object.keys(this.state.btVariables).map((i, j) =>
+                                        Object.keys(bootstrapVariables[i]).length > 0 &&
+                                        <VariableSection
+                                            key={i}
+                                            collapseDefaultValue={j == 1 ? true : false}
+                                            sectionName={i}
+                                            sectionByDefault={bootstrapVariables[i]}
+                                            sectionByState={this.state.btVariables[i]}
+                                            onChange={(value, key) => {
+                                                if (value == "") {
+                                                    delete this.state.btVariables[i][key];
+                                                    delete this.state.btHashVars[key];
+                                                }
+                                                else {
+                                                    this.state.btVariables[i][key] = value;
+                                                    this.state.btHashVars[key] = value;
+                                                }
 
-                                            this.setState({
-                                                btVariables: this.state.btVariables,
-                                                btHashVars: this.state.btHashVars
-                                            }, this.afterValueChange);
-                                        }}
-                                        search={this.state.search}
-                                    />
-                                )}
+                                                this.setState({
+                                                    btVariables: this.state.btVariables,
+                                                    btHashVars: this.state.btHashVars
+                                                }, this.afterValueChange);
+                                            }}
+                                            search={this.state.search}
+                                        />
+                                    )}
+                                </Collapse>
                             </div>
 
                             <div className="col-md-8">
@@ -354,48 +384,37 @@ class App extends React.Component {
                                         className="form-control"
                                         value={this.state.customStyle}
                                         onChange={(value) => this.setState({ customStyle: value }, this.afterValueChange)}
-                                        placeholder="Here you can insert custom CSS, for example to import a webfont."
+                                        placeholder="Here you can insert custom CSS or SCSS, for example to import a webfont."
                                         spellCheck={false}
                                     />
                                 </div>
 
                                 <div className="form-group">
                                     <textarea
-                                        className="form-control"
+                                        className="form-control d-none d-md-block"
                                         value={this.state.outputStyle}
                                         readOnly
                                         disabled
                                         placeholder="No compiled stylesheet yet. Change some variables and see what will happen."
-                                        style={{ minHeight: "200px", wordWrap: "inherit" }}
+                                        style={{ minHeight: "100px", wordWrap: "inherit" }}
                                         spellCheck={false}
                                     />
                                 </div>
 
-                                {!this.state.colorganizeVersion && [
-                                    <a
-                                        key={0}
-                                        className="btn btn-secondary mr-3"
-                                        href="."
-                                        target="_self"
-                                    >
-                                        <span className="icon-undo2" /> Reset
-                                    </a>,
-                                    <ClipboardButton
-                                        key={1}
-                                        className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
-                                        data-clipboard-text={location.href}
-                                        onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
-                                            setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
-                                        })}
-                                    >
-                                        {this.state.copyConfigSuccess ?
-                                            <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
-                                            :
-                                            <span><span className="icon-share" /> Share this config</span>
-                                        }
+                                <ClipboardButton
+                                    className={"btn mr-3 btn-" + (this.state.copyConfigSuccess ? "success" : "secondary")}
+                                    data-clipboard-text={location.href}
+                                    onSuccess={() => this.setState({ copyConfigSuccess: true }, () => {
+                                        setTimeout(() => this.setState({ copyConfigSuccess: false }), 3000);
+                                    })}
+                                >
+                                    {this.state.copyConfigSuccess ?
+                                        <span><span className="icon-checkmark" /> Nice, you copied the URL. Now you can share it.</span>
+                                        :
+                                        <span><span className="icon-share" /> Share this config</span>
+                                    }
 
-                                    </ClipboardButton>
-                                ]}
+                                </ClipboardButton>
 
                                 <ClipboardButton
                                     className={"btn btn-" + (this.state.copyCodeSuccess ? "success" : "secondary")}
@@ -407,7 +426,7 @@ class App extends React.Component {
                                     {this.state.copyCodeSuccess ?
                                         <span><span className="icon-checkmark" /> Nice, you copied the code. Have fun with it.</span>
                                         :
-                                        <span><span className="icon-copy" /> Copy the code</span>
+                                        <span><span className="icon-copy" /> Copy the output code</span>
                                     }
 
                                 </ClipboardButton>
