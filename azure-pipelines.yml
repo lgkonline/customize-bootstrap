@@ -15,7 +15,7 @@ variables:
   webAppName: 'Customize Bootstrap'
   
   # Environment name
-  environmentName: ''
+  environmentName: 'Node.js'
 
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
